@@ -1,3 +1,6 @@
+--taken from 
+--http://www.anchormodeling.com/?p=1141
+
 declare @totalSize int = 1000000;
 declare @drawSize int = 10000;
  
