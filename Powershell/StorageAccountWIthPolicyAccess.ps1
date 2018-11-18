@@ -5,9 +5,8 @@ $containerName = "mycontainer"
 $storagePolicyName = “readpolicy”
 $expiryTime = (Get-Date).AddDays(7)
 $permission = "r" ##r,w,l,d
-$requestsSaS = true
+$requestSaS = 1
 
-<#
 function Update-StorageAccountSharedAccessPolicyWithSignature{
     param(
      [string]   $resourceGroupName ,
@@ -15,12 +14,11 @@ function Update-StorageAccountSharedAccessPolicyWithSignature{
      [string]   $storageAccountName ,
      [string]   $container ,
      [string]   $storagePolicyName ,
-     [datetime] $expiryTime ,
+     [DateTime] $expiryTime ,
      [string]   $permission 
     )
-    #>
-   
-    clear-host
+      
+clear-host
 
 Connect-AzureRmAccount
 
@@ -50,8 +48,6 @@ else
 Write-Output $storageAccountName " storage account already exists."
 }
 
-
-
 ## 3.0 Create Container
 $storageAccountKey = (Get-AzureRmStorageAccountKey -ResourceGroupName $resourceGroupName -Name $storageAccountName).Value[0]
 $storageContext = New-AzureStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccountKey
@@ -65,8 +61,6 @@ $storageContainer = New-AzureStorageContainer -Name $containerName -Context $sto
 {
 Write-Output $containerName " container already exists."
 }
-
-
 
 
 ## 4.0 Create or Update Shared Access Policy
@@ -85,24 +79,21 @@ Set-AzureStorageContainerStoredAccessPolicy -Container $containerName -Policy $s
 
 ## 5.0 Create Shared Access Signature from Policy and Return
 
-If($requestsSaS)
+If($requestSaS)
 {
 Write-Output "Returning SaS..."
-$sasToken = (New-AzureStorageContainerSASToken -Name $containerName -Policy $storagePolicyName -Context $storageContext).substring(1)
+Write-Output (New-AzureStorageContainerSASToken -Name $containerName -Policy $storagePolicyName -Context $storageContext).substring(1)
 }
 else
 {
 Write-Output "No SaS requested so none returned."
 }
+}
 
-#>
-
-<#
 Update-StorageAccountSharedAccessPolicyWithSignature -resourceGroupName  $resourceGroupName `
 -location $location `
 -storageaccountname $storageaccountname `
 -container $container `
--storagePolicyName $storagePolicyName ` 
+-storagePolicyName $storagePolicyName `
 -expiryTime $expiryTime `
 -permission $permission 
-#>
